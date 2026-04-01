@@ -1,0 +1,29 @@
+ db.products.find(   {     $or: [       { price: { $lt: 699 } },       { price: { $gt: 799 } }     ]   },   {     name: 1,     price: 1   } )
+{ "_id" : 2, "name" : "xTablet", "price" : 899 }
+{ "_id" : 3, "name" : "SmartTablet", "price" : 899 }
+{ "_id" : 5, "name" : "SmartPhone", "price" : 599 }
+> db.products.find({},{name:1.spec:1}).sort({"spec.ram":1});
+uncaught exception: SyntaxError: identifier starts immediately after numeric literal :
+@(shell):1:26
+> db.products.find({},{name:1,spec:1}).sort({"spec.ram":1});
+{ "_id" : 1, "name" : "xPhone", "spec" : { "ram" : 4, "screen" : 6.5, "cpu" : 2.66 } }
+{ "_id" : 5, "name" : "SmartPhone", "spec" : { "ram" : 4, "screen" : 9.7, "cpu" : 1.66 } }
+{ "_id" : 4, "name" : "SmartPad", "spec" : { "ram" : 8, "screen" : 9.7, "cpu" : 1.66 } }
+{ "_id" : 3, "name" : "SmartTablet", "spec" : { "ram" : 12, "screen" : 9.7, "cpu" : 3.66 } }
+{ "_id" : 2, "name" : "xTablet", "spec" : { "ram" : 16, "screen" : 9.5, "cpu" : 3.66 } }
+> db.products.find({releaseDate:{$exists:1}},{name:1,releaseDate:1}).sort({releaseDate:-1});
+{ "_id" : 5, "name" : "SmartPhone", "releaseDate" : ISODate("2022-09-14T00:00:00Z") }
+{ "_id" : 4, "name" : "SmartPad", "releaseDate" : ISODate("2020-05-14T00:00:00Z") }
+{ "_id" : 3, "name" : "SmartTablet", "releaseDate" : ISODate("2015-01-14T00:00:00Z") }
+{ "_id" : 2, "name" : "xTablet", "releaseDate" : ISODate("2011-09-01T00:00:00Z") }
+{ "_id" : 1, "name" : "xPhone", "releaseDate" : ISODate("2011-05-14T00:00:00Z") }
+> db.products.find({'price':{$exists:1}},{name:1,price:1}).sort({price:1,name:1});
+{ "_id" : 5, "name" : "SmartPhone", "price" : 599 }
+{ "_id" : 4, "name" : "SmartPad", "price" : 699 }
+{ "_id" : 1, "name" : "xPhone", "price" : 799 }
+{ "_id" : 3, "name" : "SmartTablet", "price" : 899 }
+{ "_id" : 2, "name" : "xTablet", "price" : 899 }
+> db.products.find({},{name:1,price:1}).sort({price:-1,name:1}).limit(1);
+{ "_id" : 3, "name" : "SmartTablet", "price" : 899 }
+> 
+
