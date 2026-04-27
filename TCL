@@ -1,0 +1,173 @@
+mysql> create database comp;
+Query OK, 1 row affected (0.15 sec)
+
+mysql> use comp;
+Database changed
+mysql> create table Order_Details(Order_id int,Product_name varchar(100),Order_num int,Order_Date date);
+Query OK, 0 rows affected (1.03 sec)
+
+mysql> Insert into Order_details(Order_id,Product_Name,Order_Num,Order_Date)Values(1,'Laptop',5544,'2020-02-01'),(2,'Mouse',3322,'2020-02-11'),(3,'Desktop',2135,'2020-01-05'),(4,'Mobile',3432,'2020-02-22'),(5,'Anti-Virus',5648,'2020-03-10');
+ERROR 1146 (42S02): Table 'comp.Order_details' doesn't exist
+mysql> Insert into Order_Details(Order_id,Product_Name,Order_Num,Order_Date)Values(1,'Laptop',5544,'2020-02-01'),(2,'Mouse',3322,'2020-02-11'),(3,'Desktop',2135,'2020-01-05'),(4,'Mobile',3432,'2020-02-22'
+Query OK, 5 rows affected (0.12 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> INSERT INTO Order_Details (Order_ID, Product_Name, Order_Num, Order_Date)  VALUES  (6, 'FireWall', 1006, '2023-07-22'), (7, 'Keyboard', 1007, '2023-07-22');
+Query OK, 2 rows affected (0.00 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM Order_Details;
++----------+--------------+-----------+------------+
+| Order_id | Product_name | Order_num | Order_Date |
++----------+--------------+-----------+------------+
+|        1 | Laptop       |      5544 | 2020-02-01 |
+|        2 | Mouse        |      3322 | 2020-02-11 |
+|        3 | Desktop      |      2135 | 2020-01-05 |
+|        4 | Mobile       |      3432 | 2020-02-22 |
+|        5 | Anti-Virus   |      5648 | 2020-03-10 |
+|        6 | FireWall     |      1006 | 2023-07-22 |
+|        7 | Keyboard     |      1007 | 2023-07-22 |
++----------+--------------+-----------+------------+
+7 rows in set (0.00 sec)
+
+mysql> ROLLBACK;
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT * FROM Order_Details;
++----------+--------------+-----------+------------+
+| Order_id | Product_name | Order_num | Order_Date |
++----------+--------------+-----------+------------+
+|        1 | Laptop       |      5544 | 2020-02-01 |
+|        2 | Mouse        |      3322 | 2020-02-11 |
+|        3 | Desktop      |      2135 | 2020-01-05 |
+|        4 | Mobile       |      3432 | 2020-02-22 |
+|        5 | Anti-Virus   |      5648 | 2020-03-10 |
++----------+--------------+-----------+------------+
+5 rows in set (0.01 sec)
+
+mysql> Delete from Order_Details Where Order_id in (4,5);
+Query OK, 2 rows affected (0.00 sec)
+
+mysql> SELECT * FROM Order_Details;
++----------+--------------+-----------+------------+
+| Order_id | Product_name | Order_num | Order_Date |
++----------+--------------+-----------+------------+
+|        1 | Laptop       |      5544 | 2020-02-01 |
+|        2 | Mouse        |      3322 | 2020-02-11 |
+|        3 | Desktop      |      2135 | 2020-01-05 |
++----------+--------------+-----------+------------+
+3 rows in set (0.00 sec)
+
+mysql> COMMIT:
+    -> ^C^X
+
+^C
+mysql> 
+mysql> COMMIT;
+Query OK, 0 rows affected (0.09 sec)
+
+mysql> SELECT * FROM Order_Details;
++----------+--------------+-----------+------------+
+| Order_id | Product_name | Order_num | Order_Date |
++----------+--------------+-----------+------------+
+|        1 | Laptop       |      5544 | 2020-02-01 |
+|        2 | Mouse        |      3322 | 2020-02-11 |
+|        3 | Desktop      |      2135 | 2020-01-05 |
++----------+--------------+-----------+------------+
+3 rows in set (0.00 sec)
+
+mysql> Set autocommit=0;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> savepoint Check_updates;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> Update Order_Details set Product_Name='ASUS-Laptop' where Order_Num=5544;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> INSERT INTO Order_Details (Order_ID, Product_Name, Order_Num, Order_Date)  VALUES  (6, 'FireWall', 1006, '2023-07-22'), (7, 'Keyboard', 1007, '2023-07-22');
+Query OK, 2 rows affected (0.00 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> savepoint Check_delete;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> Delete from Order_Details Where Product_Name='Laptop';
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> Select * from Order_Details;
++----------+--------------+-----------+------------+
+| Order_id | Product_name | Order_num | Order_Date |
++----------+--------------+-----------+------------+
+|        1 | ASUS-Laptop  |      5544 | 2020-02-01 |
+|        2 | Mouse        |      3322 | 2020-02-11 |
+|        3 | Desktop      |      2135 | 2020-01-05 |
+|        6 | FireWall     |      1006 | 2023-07-22 |
+|        7 | Keyboard     |      1007 | 2023-07-22 |
++----------+--------------+-----------+------------+
+5 rows in set (0.00 sec)
+
+mysql> ROLLBACK TO SAVEPOINT check_date;
+ERROR 1305 (42000): SAVEPOINT check_date does not exist
+mysql> ROLLBACK TO SAVEPOINT check_delete;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> Select * from Order_Details;
++----------+--------------+-----------+------------+
+| Order_id | Product_name | Order_num | Order_Date |
++----------+--------------+-----------+------------+
+|        1 | ASUS-Laptop  |      5544 | 2020-02-01 |
+|        2 | Mouse        |      3322 | 2020-02-11 |
+|        3 | Desktop      |      2135 | 2020-01-05 |
+|        6 | FireWall     |      1006 | 2023-07-22 |
+|        7 | Keyboard     |      1007 | 2023-07-22 |
++----------+--------------+-----------+------------+
+5 rows in set (0.00 sec)
+
+mysql> ROLLBACK TO SAVEPOINT Check_Updates;
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> Select * from Order_Details;
++----------+--------------+-----------+------------+
+| Order_id | Product_name | Order_num | Order_Date |
++----------+--------------+-----------+------------+
+|        1 | Laptop       |      5544 | 2020-02-01 |
+|        2 | Mouse        |      3322 | 2020-02-11 |
+|        3 | Desktop      |      2135 | 2020-01-05 |
++----------+--------------+-----------+------------+
+3 rows in set (0.00 sec)
+
+mysql> COMMIit;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'COMMIit' at line 1
+mysql> commit;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> Set autocommit
+    -> 
+
+^C
+mysql> Set autocommit;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1
+mysql> Set autocommit=1;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> Select * from Order_Details;
++----------+--------------+-----------+------------+
+| Order_id | Product_name | Order_num | Order_Date |
++----------+--------------+-----------+------------+
+|        1 | Laptop       |      5544 | 2020-02-01 |
+|        2 | Mouse        |      3322 | 2020-02-11 |
+|        3 | Desktop      |      2135 | 2020-01-05 |
++----------+--------------+-----------+------------+
+3 rows in set (0.00 sec)
+
+mysql> s2mcabatch2@lab6-Veriton-S2670G:~/Desktop/Ebru
+
+
